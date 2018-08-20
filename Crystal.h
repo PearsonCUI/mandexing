@@ -92,7 +92,7 @@ public:
         return &_reflections[i];
     }
     
-    int millerCount()
+    size_t millerCount()
     {
         return _reflections.size();
     }
@@ -151,6 +151,11 @@ public:
         _wavelength = wavelength;
     }
     
+    double getRlpSize()
+    {
+	return _rlpSize;
+    }
+    
     void setRlpSize(double rlpSize)
     {
         _rlpSize = rlpSize;
@@ -172,6 +177,13 @@ public:
         _rotation = rot;
     }
     
+    mat3x3 getUnitCell()
+    {
+    	return _unitCell;
+    }
+    
+    void setUnitCell(mat3x3 unitCell);
+
     void setBravaisLattice(BravaisLatticeType type)
     {
         _latticeType = type;

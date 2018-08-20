@@ -41,7 +41,7 @@ bool converged()
 
 void NelderMead::addPoints(std::vector<double> *point, std::vector<double> pointToAdd)
 {
-    for (int i = 0; i < point->size(); i++)
+    for (size_t i = 0; i < point->size(); i++)
     {
         (*point)[i] += pointToAdd[i];
     }
@@ -49,7 +49,7 @@ void NelderMead::addPoints(std::vector<double> *point, std::vector<double> point
 
 void NelderMead::subtractPoints(std::vector<double> *point, std::vector<double> pointToSubtract)
 {
-    for (int i = 0; i < point->size(); i++)
+    for (size_t i = 0; i < point->size(); i++)
     {
         (*point)[i] -= pointToSubtract[i];
     }
@@ -57,7 +57,7 @@ void NelderMead::subtractPoints(std::vector<double> *point, std::vector<double> 
 
 void NelderMead::scalePoint(std::vector<double> *point, double scale)
 {
-    for (int i = 0; i < point->size(); i++)
+    for (size_t i = 0; i < point->size(); i++)
     {
         (*point)[i] *= scale;
     }
@@ -80,11 +80,11 @@ std::vector<double> NelderMead::calculateCentroid()
     centroid.resize(tags.size());
     orderTestPoints();
     
-    for (int i = 0; i < tags.size(); i++)
+    for (size_t i = 0; i < tags.size(); i++)
     {
         double total = 0;
         
-        for (int j = 0; j < testPoints.size() - 1; j++)
+        for (size_t j = 0; j < testPoints.size() - 1; j++)
         {
             total += testPoints[j].first[i];
         }
@@ -132,7 +132,7 @@ void NelderMead::reduction()
 {
     TestPoint bestPoint = testPoints[0];
     
-    for (int i = 1; i < testPoints.size(); i++)
+    for (size_t i = 1; i < testPoints.size(); i++)
     {
         TestPoint point = testPoints[i];
         
@@ -173,7 +173,7 @@ void NelderMead::evaluateTestPoint(TestPoint *testPoint)
 
 void NelderMead::setTestPointParameters(TestPoint *testPoint)
 {
-    for (int i = 0; i < tags.size(); i++)
+    for (size_t i = 0; i < tags.size(); i++)
     {
         (*setters[i])(objects[i], testPoint->first[i]);
     }
@@ -196,12 +196,12 @@ void NelderMead::refine()
     if (tags.size() == 0)
         return;
     
-    for (int i = 0; i < testPoints.size(); i++)
+    for (size_t i = 0; i < testPoints.size(); i++)
     {
         testPoints[i].second = 0;
         testPoints[i].first.resize(tags.size());
         
-        for (int j = 0; j < tags.size(); j++)
+        for (size_t j = 0; j < tags.size(); j++)
         {
             if (i == 0)
             {
@@ -210,7 +210,7 @@ void NelderMead::refine()
             
             if (i > 0)
             {
-                int minJ = i - 1;
+                size_t minJ = i - 1;
                 double scale = 2;
                 
                 testPoints[i].first[j] = testPoints[0].first[j] + (j == minJ) * scale * stepSizes[j];
@@ -218,7 +218,7 @@ void NelderMead::refine()
         }
     }
     
-    for (int i = 0; i < testPoints.size(); i++)
+    for (size_t i = 0; i < testPoints.size(); i++)
     {
         evaluateTestPoint(i);
     }

@@ -151,7 +151,7 @@ public:
         entries.push_back(entry);
     }
     
-    int entryCount()
+    size_t entryCount()
     {
         return (int)entries.size();
     }
@@ -166,7 +166,7 @@ public:
 		return entries[entry][headerNum];
 	}
 
-    int headerCount()
+    size_t headerCount()
     {
         return (int)headers.size();
     }

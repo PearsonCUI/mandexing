@@ -67,7 +67,7 @@ void RefinementGridSearch::recursiveEvaluation(ParamList referenceList, ParamLis
         return;
     }
     
-    for (int i = 0; i < workingList.size(); i++)
+    for (size_t i = 0; i < workingList.size(); i++)
     {
         Setter setter = setters[i];
         (*setter)(objects[i], workingList[i]);
@@ -90,7 +90,7 @@ void RefinementGridSearch::refine()
     ParamList currentValues;
     CSVPtr csv = CSVPtr(new CSV());
 
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
     {
         Getter getter = getters[i];
         currentValues.push_back((*getter)(objects[i]));
@@ -120,7 +120,7 @@ void RefinementGridSearch::refine()
         csv->addEntry(result);
     }
 
-	for (int i = 0; i < minParams.size(); i++)
+	for (size_t i = 0; i < minParams.size(); i++)
 	{
 		Setter setter = setters[i];
 

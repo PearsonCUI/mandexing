@@ -36,32 +36,36 @@
 Tinker::Tinker(QWidget *parent) : QMainWindow(parent)
 {
     this->resize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    
+
     this->setWindowTitle("Mandexing");
 	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 	QAction *openAct = fileMenu->addAction(tr("&Open..."));
 	connect(openAct, &QAction::triggered, this, &Tinker::openImage);
-	QAction *saveAs = fileMenu->addAction(tr("&Save matrix..."));
+	QAction *saveAs = fileMenu->addAction(tr("&Save state..."));
 	connect(saveAs, &QAction::triggered, this, &Tinker::saveMatrix);
-	QAction *loadMatrix = fileMenu->addAction(tr("&Load matrix..."));
+	QAction *loadMatrix = fileMenu->addAction(tr("&Load state..."));
 	connect(loadMatrix, &QAction::triggered, this, &Tinker::loadMatrix);
 	
 	myDialogue = NULL;
 	bUnitCell = new QPushButton("Set unit cell", this);
+	bUnitCell->setToolTip("Enter crystal's unit cell dimensions");
 	bUnitCell->setGeometry(0, 25, BUTTON_WIDTH, 50);
     connect(bUnitCell, SIGNAL(clicked()), this, SLOT(setUnitCellClicked()));
 
 	bAxisOnScreen = new QPushButton("Bring axis on screen", this);
+	bAxisOnScreen->setToolTip("Enter two known axes to appear on detector");
 	bAxisOnScreen->setGeometry(0, 75, BUTTON_WIDTH, 50);
     connect(bAxisOnScreen, SIGNAL(clicked()), this,
             SLOT(setAxisOnScreenClicked()));
 
 	bFixAxis = new QPushButton("Fix axis", this);
+	bFixAxis->setToolTip("Change axis for WASD-key rotation");
 	bFixAxis->setGeometry(0, 125, BUTTON_WIDTH, 50);
     connect(bFixAxis, SIGNAL(clicked()), this,
             SLOT(fixAxisClicked()));
 
 	bBeamCentre = new QPushButton("BC", this);
+	bBeamCentre->setToolTip("Manually alter beam centre");
 	bBeamCentre->setGeometry(55, BEAM_CENTRE_GROUP_YOFFSET + 50, 50, 50);
     connect(bBeamCentre, SIGNAL(clicked()), this,
             SLOT(setBeamCentreClicked()));
@@ -97,47 +101,56 @@ Tinker::Tinker(QWidget *parent) : QMainWindow(parent)
             SLOT(setWavelengthClicked()));
 
 	bRlpSize = new QPushButton("Set rlp size", this);
+	bRlpSize->setToolTip("Change size of reciprocal lattice points");
 	bRlpSize->setGeometry(0, 430, BUTTON_WIDTH, 50);
     connect(bRlpSize, SIGNAL(clicked()), this,
             SLOT(setRlpSizeClicked()));
 
 	bDegrees = new QPushButton("Set degree step", this);
+	bDegrees->setToolTip("Change increment of rotations by WASD keys");
 	bDegrees->setGeometry(0, 480, BUTTON_WIDTH, 50);
     connect(bDegrees, SIGNAL(clicked()), this,
             SLOT(setDegreeStepClicked()));
 
 	bRefine = new QPushButton("Refine", this);
+	bRefine->setToolTip("Click once; choose strong reflections; click again");
 	bRefine->setGeometry(0, 530, BUTTON_WIDTH, 50);
     connect(bRefine, SIGNAL(clicked()), this,
             SLOT(refineClicked()));
 
 	bLatPrimitive = new QPushButton("P", this);
+	bLatPrimitive->setToolTip("Choose primitive lattice");
 	bLatPrimitive->setGeometry(30, BRAVAIS_LATTICE_YOFFSET, 50, 50);
 	connect(bLatPrimitive, &QPushButton::clicked,
 			[=]{ changeLattice(BravaisLatticePrimitive); });
 
 	bLatBase = new QPushButton("C", this);
+	bLatBase->setToolTip("Choose base-centred lattice");
 	bLatBase->setGeometry(80, BRAVAIS_LATTICE_YOFFSET, 50, 50);
 	connect(bLatBase, &QPushButton::clicked,
 			[=]{ changeLattice(BravaisLatticeBase); });
 
 	bLatBody = new QPushButton("I", this);
+	bLatBody->setToolTip("Choose body-centred lattice");
 	bLatBody->setGeometry(30, BRAVAIS_LATTICE_YOFFSET + 50, 50, 50);
 	connect(bLatBody, &QPushButton::clicked,
 			[=]{ changeLattice(BravaisLatticeBody); });
 
 	bLatFace = new QPushButton("F", this);
+	bLatFace->setToolTip("Choose face-centred lattice");
 	bLatFace->setGeometry(80, BRAVAIS_LATTICE_YOFFSET + 50, 50, 50);
 	connect(bLatFace, &QPushButton::clicked,
 			[=]{ changeLattice(BravaisLatticeFace); });
 
 
     bResolution = new QPushButton("Set resolution", this);
+	bResolution->setToolTip("Set maximum calculated resolution");
 	bResolution->setGeometry(0, 680, BUTTON_WIDTH, 50);
 	connect(bResolution, SIGNAL(clicked()), this,
 			SLOT(setResolutionClicked()));
 
     bIdentifyHkl = new QPushButton("Identify hkl", this);
+	bResolution->setToolTip("Click once; choose a few reflections; click off");
 	bIdentifyHkl->setGeometry(0, 730, BUTTON_WIDTH, 50);
 	connect(bIdentifyHkl, SIGNAL(clicked()), this,
 			SLOT(identifyHkl()));
@@ -174,6 +187,13 @@ Tinker::Tinker(QWidget *parent) : QMainWindow(parent)
 	overlayView->show();
 
 	_detector.setCrystal(&_crystal);
+    
+    _notice = new QLabel("Load an image (.png, .jpg, etc.)\n"\
+                         "from the file menu.", this);
+    _notice->setGeometry((DEFAULT_WIDTH / 2 + BUTTON_WIDTH - 200), 
+                         DEFAULT_HEIGHT / 2 - 20,
+                         200, 40);
+    _notice->show();
 }
 
 void Tinker::resizeEvent(QResizeEvent *)
@@ -205,9 +225,9 @@ void Tinker::setUnitCellClicked()
 {
 	delete myDialogue;
     myDialogue = new Dialogue(this, "Choose unit cell (Å, º)",
-    								"Enter a b c alpha beta gamma:",
-    								"79.2 79.2 38.0 90 90 90",
-    								"Set unit cell");
+                              "Enter a b c alpha beta gamma:",
+                              "79.2 79.2 38.0 90 90 90",
+                              "Set unit cell");
 	myDialogue->setTag(DialogueUnitCell);
     myDialogue->setTinker(this);
 	myDialogue->show();
@@ -217,9 +237,9 @@ void Tinker::setAxisOnScreenClicked()
 {
 	delete myDialogue;
     myDialogue = new Dialogue(this, "Bring axis on screen",
-    								"Enter one or two Miller index vectors:",
-    								"1 0 0 0 0 1",
-    								"Set axis");
+                              "Enter one or two Miller index vectors:",
+                              "1 0 0 0 0 1",
+                              "Set axis");
 	myDialogue->setTag(DialogueBringAxis);
     myDialogue->setTinker(this);
 	myDialogue->show();
@@ -229,9 +249,9 @@ void Tinker::setBeamCentreClicked()
 {
 	delete myDialogue;
     myDialogue = new Dialogue(this, "Set beam centre (pixels)",
-    								"Enter new beam centre:",
-    								"2200 2200",
-    								"Set centre");
+                              "Enter new beam centre:",
+                              "2200 2200",
+                              "Set centre");
 	myDialogue->setTag(DialogueBeamCentre);
     myDialogue->setTinker(this);
 	myDialogue->show();
@@ -360,7 +380,7 @@ void Tinker::drawPredictions()
 	
 	int ellipseSize = 10;
 	
-	for (int i = 0; i < _crystal.millerCount(); i++)
+	for (size_t i = 0; i < _crystal.millerCount(); i++)
 	{
 		bool onImage = _crystal.shouldDisplayMiller(i);
 
@@ -402,7 +422,7 @@ void Tinker::drawPredictions()
 	
 	mat3x3 scaled_basis = _crystal.getScaledBasisVectors();
 	
-	for (int i = 0; i < 3; i++)
+	for (size_t i = 0; i < 3; i++)
 	{
 		QPen pen = QPen(QColor(255, 0, 0));
 		vec3 basis_vector = mat3x3_axis(scaled_basis, i);
@@ -597,6 +617,7 @@ void Tinker::openImage()
 		if (!blankImage.load(fileNames[0]))
 		{
 			qDebug("Error loading image");
+			return;
 		}
 
 		bool first = false;
@@ -611,6 +632,7 @@ void Tinker::openImage()
 		
 		this->setWindowTitle(newTitle.c_str());
 
+		_notice->hide();
 		imageLabel->setPixmap(blankImage);
 		if (first)
 		{
@@ -623,7 +645,7 @@ void Tinker::openImage()
 void Tinker::loadMatrix()
 {
 	delete fileDialogue;
-	fileDialogue = new QFileDialog(this, tr("Load matrix"),
+	fileDialogue = new QFileDialog(this, tr("Load state"),
 									 tr("Mandexing matrix file (*.dat)"));
 	fileDialogue->setFileMode(QFileDialog::AnyFile);
 	fileDialogue->show();
@@ -631,43 +653,99 @@ void Tinker::loadMatrix()
 	QStringList fileNames;
 	if (fileDialogue->exec())
 	{
-    	fileNames = fileDialogue->selectedFiles();
-    }
+		fileNames = fileDialogue->selectedFiles();
+	}
     
     if (fileNames.size() >= 1)
 	{
 		std::string filename = fileNames[0].toStdString();
 		std::string matrix = get_file_contents(filename);
 		
-		std::vector<std::string> components = split(matrix, ' ');
+		std::vector<std::string> lines = split(matrix, '\n');
 		
 		QMessageBox *msgBox = new QMessageBox(this);
 		msgBox->setStandardButtons(QMessageBox::Ok);
 		msgBox->setDefaultButton(QMessageBox::Ok);
 		msgBox->setWindowModality(Qt::NonModal);
 		msgBox->setText("Sorry no");
-			
-		if (components.size() < 10)
-		{
-			msgBox->setInformativeText("Not enough components, expecting 10 space-separated "\
-			"values. Try again.");
-			msgBox->exec();
-		}
-		else if (components[0] != "rotation")
-		{
-			msgBox->setInformativeText("Expecting the first component to be 'rotation'.");		
-			msgBox->exec();
-		}
-
-		mat3x3 rotMat = make_mat3x3();
-
-		for (int i = 1; i < 10; i++)
-		{
-			float value = atof(components[i].c_str());
-			rotMat.vals[i - 1] = value;
-		}
 		
-		_crystal.setRotation(rotMat);
+		for (size_t i = 0; i < lines.size(); i++)
+		{
+			std::vector<std::string> components = split(lines[i], ' ');
+			
+			if (components.size() == 0)
+			{
+				continue;
+			}
+
+			if (components[0] == "rotation" || components[0] == "unitcell")
+			{
+				if (components.size() < 10)
+				{
+					msgBox->setInformativeText("Not enough components,"\
+					                           "expecting 9 space-separated "\
+					                           "values. Try again.");
+					msgBox->exec();
+				}
+			}
+
+			if (components[0] == "rotation")
+			{
+				mat3x3 rotMat = mat3x3_from_string(components);
+				_crystal.setRotation(rotMat);
+			}
+
+			if (components[0] == "unitcell")
+			{
+				mat3x3 unitCell = mat3x3_from_string(components);
+				_crystal.setUnitCell(unitCell);
+			}
+
+			if (components[0] == "det_centre")
+			{
+				if (components.size() < 4)
+				{
+					msgBox->setInformativeText("Not enough components,"\
+					                           "expecting 3 space-separated "\
+					                           "values. Try again.");
+					msgBox->exec();
+				}
+
+				vec3 centre = vec3_from_string(components);
+				_detector.setBeamCentre(centre.x, centre.y);
+				_detector.setDetectorDistance(centre.z);
+			}
+			
+			if (components[0] == "wavelength")
+			{
+				if (components.size() < 2)
+				{
+					msgBox->setInformativeText("Not enough components,"\
+					                           "expecting 1 "\
+					                           "value. Try again.");
+					msgBox->exec();
+				}
+
+				double wave = atof(components[1].c_str());
+				_detector.setWavelength(wave);
+				_crystal.setWavelength(wave);
+			}
+			
+			if (components[0] == "rlp_size")
+			{
+				if (components.size() < 2)
+				{
+					msgBox->setInformativeText("Not enough components,"\
+					                           "expecting 1 "\
+					                           "value. Try again.");
+					msgBox->exec();
+				}
+
+				double rlp_size = atof(components[1].c_str());
+				_crystal.setRlpSize(rlp_size);
+			}
+		}
+
 		_crystal.populateMillers();
 		drawPredictions();
 		
@@ -679,7 +757,7 @@ void Tinker::saveMatrix()
 {
 	delete fileDialogue;
 	fileDialogue = new QFileDialog(this, tr("Save as .dat file"),
-									 tr("matrix.dat"));
+	                               tr("matrix.dat"));
 	fileDialogue->setFileMode(QFileDialog::AnyFile);
 	fileDialogue->setAcceptMode(QFileDialog::AcceptSave);
 	fileDialogue->show();
@@ -696,16 +774,24 @@ void Tinker::saveMatrix()
 		file.open(fileNames[0].toStdString().c_str());
 		
 		mat3x3 rot = _crystal.getRotation();
+		mat3x3 unitCell = _crystal.getUnitCell();
+		vec3 beamCentre = _detector.getBeamCentre();
 		
 		file << "rotation ";
+		file << computer_friendly_desc(rot);
 		
-		for (int i = 0; i < 9; i++)
-		{
-			file << rot.vals[i] << " ";
-		}
+		file << "unitcell ";
+		file << computer_friendly_desc(unitCell);
 		
-		file << std::endl;
+		file << "det_centre ";
+		file << computer_friendly_desc(beamCentre);
 		
+		file << "wavelength ";
+		file << _detector.getWavelength() << std::endl;
+
+		file << "rlpsize ";
+		file << _crystal.getRlpSize() << std::endl;
+
 		file.close();
 	}
 }

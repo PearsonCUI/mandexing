@@ -33,7 +33,7 @@ void Detector::calculatePositions()
 {
 	vec3 samplePos = make_vec3(0, 0, - 1 / _wavelength);
 
-	for (int i = 0; i < _xtal->millerCount(); i++)
+	for (size_t i = 0; i < _xtal->millerCount(); i++)
 	{
 		vec3 miller = _xtal->miller(i);
 
@@ -78,7 +78,7 @@ int Detector::positionNearCoord(int x, int y)
 
 	if (!_lookupTree)
 	{
-		for (int i = 0; i < _xtal->millerCount(); i++)
+		for (size_t i = 0; i < _xtal->millerCount(); i++)
 		{
 			if (nearMiller(i, x, y))
 			{
@@ -124,7 +124,7 @@ finished_node_search:
 	int best_n = -1;
 	double distance = FLT_MAX;
 	
-	for (int i = 0; i < node->nRefls; i++)
+	for (size_t i = 0; i < node->nRefls; i++)
 	{
 		int n = node->reflPtrs[i];
 

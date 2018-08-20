@@ -107,7 +107,7 @@ void RefinementStrategy::refine()
 	
     startingScore = (*evaluationFunction)(evaluateObject);
 
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
     {
         double objectValue = (*getters[i])(objects[i]);
         startingValues.push_back(objectValue);
@@ -125,7 +125,7 @@ void RefinementStrategy::reportProgress(double score)
 
     std::cout << "Cycle " << cycleNum << "\t";
     
-    for (int i = 0; i < objects.size(); i++)
+    for (size_t i = 0; i < objects.size(); i++)
     {
         double objectValue = (*getters[i])(objects[i]);
         std::cout << std::setprecision(5) << objectValue << "\t";
@@ -151,7 +151,7 @@ void RefinementStrategy::finish()
 			double rad2degscale = (_toDegrees ? rad2deg(1) : 1);
 			std::cout << "No change for " << jobName << " ";
 
-			for (int i = 0; i < objects.size(); i++)
+			for (size_t i = 0; i < objects.size(); i++)
 			{
 				double objectValue = (*getters[i])(objects[i]);
 				std::cout << tags[i] << "=" << objectValue * rad2degscale <<
@@ -177,7 +177,7 @@ void RefinementStrategy::finish()
 
 			std::cout << "for " << jobName << ": ";
 
-			for (int i = 0; i < objects.size(); i++)
+			for (size_t i = 0; i < objects.size(); i++)
 			{
 				double objectValue = (*getters[i])(objects[i]);
 				std::cout << tags[i] << "=" << objectValue * rad2degscale <<
@@ -200,7 +200,7 @@ void RefinementStrategy::finish()
 
 void RefinementStrategy::resetToInitialParameters()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (size_t i = 0; i < objects.size(); i++)
 	{
 		double objectValue = startingValues[i];
 		(*setters[i])(objects[i], objectValue);

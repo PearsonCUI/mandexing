@@ -195,15 +195,15 @@ mat3x3 mat3x3_transpose(mat3x3 &mat)
 void mat3x3_scale(mat3x3 *inverse, double a, double b, double c)
 {
 	inverse->vals[0] *= a;
-	inverse->vals[1] *= a;
-	inverse->vals[2] *= a;
+	inverse->vals[3] *= a;
+	inverse->vals[6] *= a;
 
-	inverse->vals[3] *= b;
+	inverse->vals[1] *= b;
 	inverse->vals[4] *= b;
-	inverse->vals[5] *= b;
+	inverse->vals[7] *= b;
 
-	inverse->vals[6] *= c;
-	inverse->vals[7] *= c;
+	inverse->vals[2] *= c;
+	inverse->vals[5] *= c;
 	inverse->vals[8] *= c;
 }
 
@@ -435,14 +435,14 @@ mat3x3 mat3x3_covariance(std::vector<vec3> points)
 
 	vec3 mean = make_vec3(0, 0, 0);
 
-	for (int i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < points.size(); i++)
 	{
 		mean = vec3_add_vec3(mean, points[i]);
 	}
 
 	vec3_mult(&mean, 1 / (double)points.size());
 
-	for (int i = 0; i < points.size(); i++)
+	for (size_t i = 0; i < points.size(); i++)
 	{
 		points[i] = vec3_subtract_vec3(points[i], mean);
 	}
@@ -451,7 +451,7 @@ mat3x3 mat3x3_covariance(std::vector<vec3> points)
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			for (int k = 0; k < points.size(); k++)
+			for (size_t k = 0; k < points.size(); k++)
 			{
 				double add = *(&points[k].x + i) * *(&points[k].x + j);
 				mat.vals[j * 3 + i] += add;
@@ -462,6 +462,34 @@ mat3x3 mat3x3_covariance(std::vector<vec3> points)
 	return mat;
 }
 
+std::string computer_friendly_desc(mat3x3 &mat)
+{
+	std::ostringstream str;
+	
+	for (int i = 0; i < 9; i++)
+	{
+		str << mat.vals[i] << " ";
+	}
+	
+	str << std::endl;
+	
+	return str.str();
+}
+
+mat3x3 mat3x3_from_string(std::vector<std::string> &components)
+{
+	mat3x3 mat = make_mat3x3();
+
+	for (int i = 1; i < 10; i++)
+	{
+		float value = atof(components[i].c_str());
+		mat.vals[i - 1] = value;
+	}
+
+	return mat;
+}
+
+
 mat3x3 mat3x3_map_vec_to_vec(vec3 aVec, vec3 bVec)
 {
 	vec3_set_length(&aVec, 1);
@@ -470,7 +498,10 @@ mat3x3 mat3x3_map_vec_to_vec(vec3 aVec, vec3 bVec)
 	vec3 cross = vec3_cross_vec3(aVec, bVec);
 	vec3_set_length(&cross, 1);
     
-    if (cross.x != cross.x) cross = {1, 0, 0};
+    if (cross.x != cross.x)
+    {
+        cross = make_vec3(1, 0, 0);
+    }
 
     double angle = vec3_angle_with_vec3(aVec, bVec);
     

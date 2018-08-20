@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string>
+#include <vector>
 
 struct vec3
 {
@@ -78,6 +79,8 @@ vec3 vec3_cross_vec3(vec3 &aVec, vec3 &bVec);
 double vec3_angle_from_three_points(vec3 &aVec, vec3 &bVec, vec3 &cVec);
 double ewald_wavelength(vec3 &aVec);
 
+vec3 vec3_from_string(std::vector<std::string> &components);
+std::string computer_friendly_desc(vec3 &vec);
 std::string vec3_desc(vec3 vec);
 
 inline void vec3_min_each(vec3 *minVec, vec3 &aVec)

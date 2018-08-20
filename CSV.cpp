@@ -57,7 +57,7 @@ int CSV::findHeader(std::string whichHeader)
 {
     int chosenHeader = -1;
     
-    for (int i = 0; i < headers.size(); i++)
+    for (size_t i = 0; i < headers.size(); i++)
     {
         if (headers[i] == whichHeader)
         {
@@ -112,7 +112,7 @@ double CSV::valueForHistogramEntry(int chosenHeader, double value, int categoryN
         low = std::lower_bound(histCategories.begin(), histCategories.end(), value, std::greater<double>());
     }
     
-    long num = low - histCategories.begin();
+    unsigned long num = low - histCategories.begin();
     
     if (num >= histCategories.size())
     {
@@ -126,7 +126,7 @@ void CSV::addOneToFrequency(double category, int column, double weight, int cate
 {
     bool ascending = (entries[0][categoryNum] < entries[1][categoryNum]);
     
-    for (int j = 0; j < entries.size() - 1; j++)
+    for (size_t j = 0; j < entries.size() - 1; j++)
     {
         if ((ascending && category >= entries[j][categoryNum] && category < entries[j + 1][categoryNum])
             || (!ascending && category < entries[j][categoryNum] && category >= entries[j + 1][categoryNum]))
@@ -184,7 +184,7 @@ void CSV::addEntry(int dummy, ...)
     va_start(arguments, dummy);
     Entry newEntry;
     
-    for (int i = 0; i < headers.size(); i++)
+    for (size_t i = 0; i < headers.size(); i++)
     {
         double value = va_arg(arguments, double);
         newEntry.push_back(value);
@@ -200,18 +200,18 @@ void CSV::writeToFile(std::string filename)
 
     csv.open(outputFile.c_str());
     
-    for (int i = 0; i < headers.size(); i++)
+    for (size_t i = 0; i < headers.size(); i++)
     {
         csv << headers[i] << ", ";
     }
     
     csv << std::endl;
     
-    for (int i = 0; i < entries.size(); i++)
+    for (size_t i = 0; i < entries.size(); i++)
     {
         Entry anEntry = entries[i];
         
-        for (int j = 0; j < anEntry.size(); j++)
+        for (size_t j = 0; j < anEntry.size(); j++)
         {
 			csv << std::setprecision(14) << anEntry[j] << ", ";
         }
@@ -224,7 +224,7 @@ void CSV::writeToFile(std::string filename)
 
 double CSV::valueForEntry(std::string header, int entry)
 {
-    for (int i = 0; i < headerCount(); i++)
+    for (size_t i = 0; i < headerCount(); i++)
     {
         if (headers[i] == header)
         {
@@ -265,7 +265,7 @@ void CSV::minMaxCol(int col, double *min, double *max, bool round)
     *min = FLT_MAX;
     *max = -FLT_MAX;
     
-    for (int i = 0; i < entries.size(); i++)
+    for (size_t i = 0; i < entries.size(); i++)
     {
         if (entries[i][col] > *max)
             *max = entries[i][col];
@@ -302,7 +302,7 @@ void CSV::writeStringToPlot(std::string text, Plot *plot, int y, int x)
 		return;
 	}
 	
-    for (int i = 0; i < text.length(); i++)
+    for (size_t i = 0; i < text.length(); i++)
     {
         (*plot)[y][x + i] = text[i];
     }
@@ -512,7 +512,7 @@ void CSV::plotPNG(std::map<std::string, std::string> properties)
         
         std::vector<vec2> points;
 
-        for (int i = 0; i < entries.size(); i++)
+        for (size_t i = 0; i < entries.size(); i++)
         {
             if (entries[i][xCol] != entries[i][xCol] || entries[i][yCol] != entries[i][yCol])
             {
@@ -539,7 +539,7 @@ void CSV::plotPNG(std::map<std::string, std::string> properties)
 		int yNumber = entries.size() / (double)fastStride;
 		double yBlockSize = yAxis * height / yNumber + 1.5;
 
-        for (int i = 0; i < points.size(); i++)
+        for (size_t i = 0; i < points.size(); i++)
         {
             double x = points[i].x;
             double y = points[i].y;
@@ -697,7 +697,7 @@ std::string CSV::plotColumns(int col1, int col2)
         writeStringToPlot(valueStream.str(), &plot, graphLines + 2, leftMargin + i - 2);
     }
     
-    for (int i = 0; i < entries.size(); i++)
+    for (size_t i = 0; i < entries.size(); i++)
     {
         double xValue = entries[i][col1];
         double yValue = entries[i][col2];
@@ -773,7 +773,7 @@ void CSV::resetColumn(std::string header, double value)
 {
     int headerNum = findHeader(header);
     
-    for (int i = 0; i < entries.size(); i++)
+    for (size_t i = 0; i < entries.size(); i++)
     {
         entries[i][headerNum] = value;
     }

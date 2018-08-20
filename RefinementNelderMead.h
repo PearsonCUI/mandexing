@@ -70,6 +70,7 @@ private:
 public:
     void init();
     NelderMead() : RefinementStrategy() { init(); };
+    virtual ~NelderMead() {};
     virtual void refine();
     
     virtual void clearParameters();

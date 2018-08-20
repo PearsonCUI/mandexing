@@ -86,6 +86,33 @@ Crystal::Crystal()
     _latticeType = BravaisLatticePrimitive;
 }
 
+void Crystal::setUnitCell(mat3x3 unitCell)
+{
+	_unitCell = unitCell;
+	mat3x3 real = mat3x3_inverse(unitCell);
+	
+	mat3x3 trans = mat3x3_transpose(real);
+	mat3x3 mult = mat3x3_mult_mat3x3(real, trans);
+
+	_cellDims = std::vector<double>();
+	_cellDims.resize(6);
+	_cellDims[0] = sqrt(mult.vals[0]);
+	_cellDims[1] = sqrt(mult.vals[4]);
+	_cellDims[2] = sqrt(mult.vals[8]);
+	_cellDims[3] = rad2deg(acos(mult.vals[5] / (_cellDims[1] * _cellDims[2])));
+	_cellDims[4] = rad2deg(acos(mult.vals[2] / (_cellDims[0] * _cellDims[2])));
+	_cellDims[5] = rad2deg(acos(mult.vals[1] / (_cellDims[0] * _cellDims[1])));
+	
+	std::cout << "Cell dimensions: ";
+
+	for (int i = 0; i < 6; i++)
+	{
+		std::cout << _cellDims[i] << " ";
+	}
+
+	std::cout << std::endl;
+}
+
 void Crystal::setUnitCell(std::vector<double> cellDims)
 {
     _cellDims = cellDims;

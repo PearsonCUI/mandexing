@@ -93,6 +93,8 @@ public:
 		_mock = false;
 		_toDegrees = false;
     };
+
+    virtual ~RefinementStrategy() {};
     
     static RefinementStrategyPtr userChosenStrategy();
 

@@ -39,6 +39,9 @@ void mat3x3_mult_scalar(mat3x3 *mat, double scale);
 void unit_cell_from_mat3x3(mat3x3 mat, double *vals);
 mat3x3 make_mat3x3();
 
+std::string computer_friendly_desc(mat3x3 &mat);
+mat3x3 mat3x3_from_string(std::vector<std::string> &components);
+
 inline void mat3x3_mult_vec(struct mat3x3 mat, struct vec3 *vec)
 {
 	struct vec2 v;

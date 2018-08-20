@@ -22,6 +22,28 @@
 #include <iostream>
 #include <sstream>
 
+std::string computer_friendly_desc(vec3 &vec)
+{
+	std::ostringstream str;
+	str << vec.x << " " << vec.y << " " <<
+	vec.z << std::endl;
+
+	return str.str();
+}
+
+vec3 vec3_from_string(std::vector<std::string> &components)
+{
+	vec3 vec;
+
+	for (int i = 1; i < 4; i++)
+	{
+		float value = atof(components[i].c_str());
+		*(&vec.x + i - 1) = value;
+	}
+
+	return vec;
+}
+
 
 std::string vec3_desc(vec3 vec)
 {

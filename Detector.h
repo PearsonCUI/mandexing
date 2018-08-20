@@ -52,9 +52,15 @@ public:
         _beamCentre.z = z;
     }
     
+    double getWavelength()
+    {
+	return _wavelength;
+    }
+    
     void setWavelength(double wavelength)
     {
         _wavelength = wavelength;
+	std::cout << "Setting wavelength to " << wavelength << std::endl;
     }
     
     void adjustBeamCentre(double x, double y)

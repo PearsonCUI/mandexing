@@ -127,6 +127,7 @@ private slots:
 
 private:
 	void changeBeamCentre(double deltaX, double deltaY);
+	QLabel *_notice;
 	
 	
 	std::vector<double> _unitCell;
