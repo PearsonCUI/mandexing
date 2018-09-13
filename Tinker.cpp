@@ -192,7 +192,7 @@ Tinker::Tinker(QWidget *parent) : QMainWindow(parent)
                          "from the file menu.", this);
     _notice->setGeometry((DEFAULT_WIDTH / 2 + BUTTON_WIDTH - 200), 
                          DEFAULT_HEIGHT / 2 - 20,
-                         200, 40);
+                         220, 40);
     _notice->show();
 }
 
@@ -345,17 +345,13 @@ void Tinker::transformToDetectorCoordinates(int *x, int *y)
 {
 	double w = blankImage.width();
 	double h = blankImage.height();
-	double w2 = overlayView->width();
-	double h2 = overlayView->height();
-	double bx = _detector.getBeamCentre().x;
-	double by = _detector.getBeamCentre().y;
-	double window_bx = bx * w2 / w;
-	double window_by = by * h2 / h;
+	double winw = overlayView->width();
+	double winh = overlayView->height();
 	
 	std::cout << *x << ", " << *y << " to ";
 	
-	*x = (*x - window_bx) * w / w2 + bx;
-	*y = (*y - window_by) * w / w2 + by;
+	*x *= w / winw;
+	*y *= h / winh;
 
 	std::cout << *x << ", " << *y << std::endl;
 }
@@ -394,7 +390,7 @@ void Tinker::drawPredictions()
 		
 		vec3 pos = _crystal.position(i);
 		
-		QPen pen = QPen(QColor(0, 0, 0, (1 - weight) * 255));
+		QPen pen = QPen(QColor(0, 0, 255, (1 - weight) * 255));
 		bool watching = _crystal.isBeingWatched(i);
 		
 		if (_refineStage != 1) watching = false;
@@ -403,7 +399,7 @@ void Tinker::drawPredictions()
 
 		if (watching)
 		{
-			brush = QBrush(QColor(255, 255, 255, 50));
+			brush = QBrush(QColor(0, 0, 255, 50));
 		}
 		
 		pos.x = w2 * pos.x / w + bx;
@@ -789,7 +785,7 @@ void Tinker::saveMatrix()
 		file << "wavelength ";
 		file << _detector.getWavelength() << std::endl;
 
-		file << "rlpsize ";
+		file << "rlp_size ";
 		file << _crystal.getRlpSize() << std::endl;
 
 		file.close();

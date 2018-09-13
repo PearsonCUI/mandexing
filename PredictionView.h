@@ -56,7 +56,7 @@ public:
 
     void setFixAxisStage(int stage);
     void setRefineStage(int stage);
-	void setIdentifyHklStage(int stage);
+    void setIdentifyHklStage(int stage);
     virtual void fitInView(const QRectF &rect, Qt::AspectRatioMode aspectRatioMode);
 protected:
     virtual void mousePressEvent(QMouseEvent *e);
